@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lekbook</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F1F3F0; --ink:#1A2320; --muted:#68736D; --line:#D8DED9; --panel:#FFFFFF; --panel-2:#E7ECE8;
+  --green:#1E5A3C; --green-soft:#DCE8DF; --red:#8B2F2F; --red-soft:#EFDCDC; --brass:#8F6F22; --brass-soft:#EEE4C8;
+  --hero:#1E5A3C; --hero-ink:#F1F3F0; --hero-muted:#B7CFC0;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#111B16; --ink:#E8EEE9; --muted:#93A198; --line:#263831; --panel:#172620; --panel-2:#1F332A;
+    --green:#7CC79A; --green-soft:#1E3A2C; --red:#E39494; --red-soft:#3D2626; --brass:#D9B75F; --brass-soft:#3B3320;
+    --hero:#1E5A3C; --hero-ink:#F1F3F0; --hero-muted:#B7CFC0;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#111B16; --ink:#E8EEE9; --muted:#93A198; --line:#263831; --panel:#172620; --panel-2:#1F332A;
+  --green:#7CC79A; --green-soft:#1E3A2C; --red:#E39494; --red-soft:#3D2626; --brass:#D9B75F; --brass-soft:#3B3320;
+  --hero:#1E5A3C; --hero-ink:#F1F3F0; --hero-muted:#B7CFC0;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{
+  margin:0; background:var(--paper); color:var(--ink);
+  font-family:"Schibsted Grotesk",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  font-variant-numeric:tabular-nums; line-height:1.45; -webkit-font-smoothing:antialiased;
+}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--green);outline-offset:2px}
+img,svg{max-width:100%}
+
+.app{max-width:720px;margin:0 auto;padding:0 18px 96px}
+
+/* top bar */
+.top{display:flex;align-items:center;justify-content:space-between;padding:14px 0 6px}
+.brand{font-weight:800;font-size:17px;letter-spacing:-.01em}
+.month-nav{display:flex;align-items:center;gap:2px}
+.month-nav button{background:none;border:0;width:40px;height:40px;border-radius:50%;font-size:22px;line-height:1;color:var(--ink)}
+.month-nav button:hover{background:var(--panel-2)}
+.month-nav .label{min-width:140px;text-align:center;font-weight:600;font-size:15px}
+.icon-btn{background:none;border:0;width:40px;height:40px;border-radius:50%;font-size:20px;color:var(--ink)}
+.icon-btn:hover{background:var(--panel-2)}
+
+/* hero */
+.hero{background:var(--hero);color:var(--hero-ink);border-radius:20px;padding:22px 20px 20px;margin-top:8px}
+.hero .lead{font-size:14px;color:var(--hero-muted);margin:0}
+.hero .big{font-size:clamp(38px,11vw,52px);font-weight:800;letter-spacing:-.03em;line-height:1.05;margin:2px 0 14px}
+.hero .big small{font-size:.42em;font-weight:500;letter-spacing:0;margin-left:6px;color:var(--hero-muted)}
+.strip{display:flex;height:14px;border-radius:7px;overflow:hidden;background:rgba(255,255,255,.14)}
+.strip span{display:block;height:100%;min-width:0}
+.strip .out{background:#E39494}
+.strip .sav{background:#E7C56E}
+.strip .left{background:#9FE0BC}
+.legend{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px}
+.legend div{font-size:13px;color:var(--hero-muted)}
+.legend b{display:block;font-size:17px;font-weight:600;color:var(--hero-ink);letter-spacing:-.01em}
+.legend i{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:6px;vertical-align:1px}
+.hero .note{margin:12px 0 0;font-size:13px;color:#F5D0D0}
+.hero .empty{margin:12px 0 0;font-size:14px;color:var(--hero-muted)}
+.hero .empty button{margin-top:10px;background:var(--hero-ink);color:var(--hero);border:0;border-radius:10px;padding:10px 14px;font-weight:600}
+
+/* sections */
+section{margin-top:30px}
+h2{font-size:15px;font-weight:600;margin:0 0 12px;display:flex;justify-content:space-between;align-items:baseline}
+h2 .sub{font-weight:400;color:var(--muted);font-size:13px}
+h2 button{background:none;border:0;color:var(--green);font-weight:600;font-size:14px;padding:4px 0}
+.muted{color:var(--muted)}
+
+/* chart */
+.chart{width:100%;height:auto;display:block}
+.chart .in{fill:var(--green)}
+.chart .out{fill:var(--red)}
+.chart text{fill:var(--muted);font-size:11px;font-family:inherit}
+.chart line{stroke:var(--line)}
+.chart-key{display:flex;gap:16px;font-size:13px;color:var(--muted);margin-top:6px}
+.chart-key i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+
+/* category bars */
+.cats{display:flex;flex-direction:column;gap:10px}
+.cat{display:grid;grid-template-columns:1fr auto;gap:2px 12px;font-size:14px}
+.cat .bar{grid-column:1/-1;height:6px;border-radius:3px;background:var(--panel-2);overflow:hidden}
+.cat .bar span{display:block;height:100%;background:var(--red);border-radius:3px}
+.cat .amt{font-weight:600}
+.cat .pct{color:var(--muted);font-size:13px;margin-left:6px;font-weight:400}
+
+/* goals */
+.goals{display:flex;flex-direction:column;gap:10px}
+.goal{width:100%;text-align:left;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px;display:grid;grid-template-columns:1fr auto;gap:4px 12px;align-items:center}
+.goal .name{font-weight:600;font-size:15px}
+.goal .nums{font-size:14px;color:var(--muted);text-align:right}
+.goal .nums b{color:var(--ink);font-weight:600}
+.goal .bar{grid-column:1/-1;height:8px;border-radius:4px;background:var(--brass-soft);overflow:hidden;margin-top:4px}
+.goal .bar span{display:block;height:100%;background:var(--brass);border-radius:4px}
+.goal .meta{grid-column:1/-1;font-size:13px;color:var(--muted);display:flex;justify-content:space-between}
+.goal .meta .add{color:var(--green);font-weight:600}
+.goal.done .bar span{background:var(--green)}
+
+/* transactions */
+.search{width:100%;border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:10px 12px;margin-bottom:8px}
+.search::placeholder{color:var(--muted)}
+.tx-list{display:flex;flex-direction:column}
+.tx{width:100%;text-align:left;background:none;border:0;border-bottom:1px solid var(--line);padding:11px 2px;display:grid;grid-template-columns:44px 1fr auto;gap:0 12px;align-items:center}
+.tx:last-child{border-bottom:0}
+.tx:hover{background:var(--panel-2)}
+.tx .day{font-size:13px;color:var(--muted);line-height:1.2}
+.tx .day b{display:block;font-size:16px;color:var(--ink);font-weight:600}
+.tx .what{min-width:0}
+.tx .what .c{font-weight:500;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tx .what .n{font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tx .amt{font-weight:600;font-size:15px;white-space:nowrap}
+.tx .amt.income{color:var(--green)}
+.tx .amt.expense{color:var(--ink)}
+.tx .amt.saving{color:var(--brass)}
+.empty-list{color:var(--muted);font-size:14px;padding:18px 0;text-align:center}
+
+/* fab */
+.fab{position:fixed;right:18px;bottom:calc(18px + env(safe-area-inset-bottom,0px));background:var(--green);color:#fff;border:0;border-radius:999px;height:52px;padding:0 20px 0 16px;font-weight:600;font-size:15px;box-shadow:0 6px 18px rgba(30,90,60,.35);display:flex;align-items:center;gap:8px}
+.fab span{font-size:22px;line-height:1;margin-top:-2px}
+
+/* dialogs */
+dialog{border:0;border-radius:18px 18px 0 0;padding:0;background:var(--panel);color:var(--ink);width:100%;max-width:720px;margin:auto auto 0;box-shadow:0 -10px 40px rgba(0,0,0,.25)}
+@media (min-width:640px){dialog{border-radius:18px;margin:auto}}
+dialog::backdrop{background:rgba(10,20,15,.45)}
+.sheet{padding:18px 20px calc(20px + env(safe-area-inset-bottom,0px))}
+.sheet h3{margin:0 0 14px;font-size:18px;font-weight:800;letter-spacing:-.01em}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);background:var(--panel-2);border-radius:10px;padding:3px;margin-bottom:14px}
+.seg label{text-align:center;padding:8px 0;border-radius:8px;font-weight:600;font-size:14px;cursor:pointer}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg input:checked+label{background:var(--panel);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.seg input:focus-visible+label{outline:2px solid var(--green)}
+.field{display:flex;flex-direction:column;gap:4px;margin-bottom:12px}
+.field label{font-size:13px;color:var(--muted)}
+.field input,.field select,.field textarea{border:1px solid var(--line);background:var(--paper);border-radius:10px;padding:11px 12px;width:100%}
+.field input[name="amount"]{font-size:26px;font-weight:700;letter-spacing:-.02em;padding:10px 12px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.actions{display:flex;gap:10px;margin-top:6px}
+.btn{border:0;border-radius:12px;padding:13px 16px;font-weight:600;font-size:15px}
+.btn.primary{background:var(--green);color:#fff;flex:1}
+.btn.ghost{background:var(--panel-2);color:var(--ink)}
+.btn.danger{background:var(--red-soft);color:var(--red)}
+.hint{font-size:13px;color:var(--muted);margin:0 0 12px}
+textarea.backup{min-height:120px;font-size:12px;font-family:ui-monospace,Menlo,Consolas,monospace}
+
+.toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(20px);background:var(--ink);color:var(--paper);padding:10px 16px;border-radius:999px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s}
+.toast.show{opacity:1;transform:translateX(-50%)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="brand">Lekbook</div>
+    <nav class="month-nav" aria-label="Month">
+      <button id="prev" aria-label="Previous month">‹</button>
+      <div class="label" id="monthLabel"></div>
+      <button id="next" aria-label="Next month">›</button>
+    </nav>
+    <button class="icon-btn" id="menuBtn" aria-label="Backup and settings">⋯</button>
+  </header>
+
+  <div class="hero" id="hero"></div>
+
+  <section>
+    <h2>Last six months</h2>
+    <svg class="chart" id="chart" viewBox="0 0 340 150" role="img" aria-label="Income and spending by month"></svg>
+    <div class="chart-key"><span><i style="background:var(--green)"></i>Income</span><span><i style="background:var(--red)"></i>Spending</span></div>
+  </section>
+
+  <section>
+    <h2>Where it went</h2>
+    <div class="cats" id="cats"></div>
+  </section>
+
+  <section>
+    <h2>Savings goals <button id="addGoal">Add goal</button></h2>
+    <div class="goals" id="goals"></div>
+  </section>
+
+  <section>
+    <h2>Transactions <span class="sub" id="txCount"></span></h2>
+    <input class="search" id="search" type="search" placeholder="Search this month" autocomplete="off">
+    <div class="tx-list" id="txList"></div>
+  </section>
+</div>
+
+<button class="fab" id="fab"><span>+</span>Add</button>
+
+<dialog id="txDialog">
+  <form class="sheet" id="txForm" method="dialog">
+    <h3 id="txTitle">Add transaction</h3>
+    <div class="seg" role="radiogroup" aria-label="Type">
+      <input type="radio" name="type" value="expense" id="tExp" checked><label for="tExp">Expense</label>
+      <input type="radio" name="type" value="income" id="tInc"><label for="tInc">Income</label>
+      <input type="radio" name="type" value="saving" id="tSav"><label for="tSav">Savings</label>
+    </div>
+    <div class="field"><label for="amount">Amount in Lek</label><input id="amount" name="amount" type="number" inputmode="decimal" min="1" step="1" required placeholder="0"></div>
+    <div class="field" id="catField"><label for="category">Category</label><input id="category" name="category" list="catList" required autocomplete="off"><datalist id="catList"></datalist></div>
+    <div class="field" id="goalField" hidden><label for="goalId">Goal</label><select id="goalId" name="goalId"></select></div>
+    <div class="row2">
+      <div class="field"><label for="date">Date</label><input id="date" name="date" type="date" required></div>
+      <div class="field"><label for="note">Note</label><input id="note" name="note" placeholder="Optional" autocomplete="off"></div>
+    </div>
+    <input type="hidden" name="id">
+    <div class="actions">
+      <button type="button" class="btn ghost" data-close>Cancel</button>
+      <button type="button" class="btn danger" id="txDelete" hidden>Delete</button>
+      <button type="submit" class="btn primary" id="txSave">Save</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="goalDialog">
+  <form class="sheet" id="goalForm" method="dialog">
+    <h3 id="goalTitle">New goal</h3>
+    <div class="field"><label for="gName">Name</label><input id="gName" name="name" required placeholder="Emergency fund" autocomplete="off"></div>
+    <div class="row2">
+      <div class="field"><label for="gTarget">Target in Lek</label><input id="gTarget" name="target" type="number" inputmode="numeric" min="1" step="1" required></div>
+      <div class="field"><label for="gDeadline">By when</label><input id="gDeadline" name="deadline" type="date"></div>
+    </div>
+    <input type="hidden" name="id">
+    <div class="actions">
+      <button type="button" class="btn ghost" data-close>Cancel</button>
+      <button type="button" class="btn danger" id="goalDelete" hidden>Delete</button>
+      <button type="submit" class="btn primary">Save</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="menuDialog">
+  <div class="sheet">
+    <h3>Backup</h3>
+    <p class="hint">Your data lives only in this browser. Copy a backup now and then, and paste it here to restore on another device.</p>
+    <div class="field"><textarea class="backup" id="backupText" spellcheck="false" aria-label="Backup data"></textarea></div>
+    <div class="actions">
+      <button type="button" class="btn ghost" id="copyBackup">Copy backup</button>
+      <button type="button" class="btn primary" id="restoreBackup">Restore from text</button>
+    </div>
+    <div class="actions" style="margin-top:14px">
+      <button type="button" class="btn danger" id="clearAll">Delete all data</button>
+      <button type="button" class="btn ghost" data-close style="flex:1">Close</button>
+    </div>
+  </div>
+</dialog>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+// ---------- pure ----------
+const ym = d => d.slice(0, 7);
+function shiftYM(month, n) {
+  const [y, m] = month.split('-').map(Number);
+  const d = new Date(y, m - 1 + n, 1);
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
+}
+function summarize(tx, month) {
+  const s = { inc: 0, out: 0, sav: 0, cats: {} };
+  for (const t of tx) {
+    if (ym(t.date) !== month) continue;
+    if (t.type === 'income') s.inc += t.amount;
+    else if (t.type === 'saving') s.sav += t.amount;
+    else { s.out += t.amount; s.cats[t.category] = (s.cats[t.category] || 0) + t.amount; }
+  }
+  s.left = s.inc - s.out - s.sav;
+  return s;
+}
+const goalSaved = (tx, id) => tx.filter(t => t.type === 'saving' && t.goalId === id).reduce((a, t) => a + t.amount, 0);
+// ---------- end pure ----------
+
+const KEY = 'lekbook';
+const EXPENSE_CATS = ['Rent', 'Groceries', 'Eating out', 'Transport', 'Utilities', 'Phone & internet', 'Health', 'Clothing', 'Entertainment', 'Subscriptions', 'Gifts', 'Other'];
+const INCOME_CATS = ['Salary', 'Freelance', 'Bonus', 'Other'];
+
+const fmt = n => new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 }).format(n);
+const lek = n => fmt(n) + ' Lek';
+const localISO = d => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+const monthName = m => new Date(+m.slice(0, 4), +m.slice(5, 7) - 1, 1).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' });
+const monthShort = m => new Date(+m.slice(0, 4), +m.slice(5, 7) - 1, 1).toLocaleDateString('en-GB', { month: 'short' });
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const $ = id => document.getElementById(id);
+
+function load() {
+  try {
+    const d = JSON.parse(localStorage.getItem(KEY));
+    if (d && Array.isArray(d.tx) && Array.isArray(d.goals)) return d;
+  } catch (e) {}
+  return { tx: [], goals: [] };
+}
+function save() {
+  try { localStorage.setItem(KEY, JSON.stringify(db)); }
+  catch (e) { toast('Could not save. Storage is blocked or full.'); }
+}
+
+let db = load();
+let month = ym(localISO(new Date()));
+let query = '';
+
+// ---------- render ----------
+function render() {
+  $('monthLabel').textContent = monthName(month);
+  const s = summarize(db.tx, month);
+  renderHero(s);
+  renderChart();
+  renderCats(s);
+  renderGoals();
+  renderTx();
+}
+
+function renderHero(s) {
+  const h = $('hero');
+  if (!db.tx.length) {
+    h.innerHTML = `<p class="lead">Left this month</p><p class="big">0<small>Lek</small></p>
+      <div class="strip"></div>
+      <p class="empty">Nothing recorded yet. Add your salary and a few expenses to see where the month stands.<br><button id="heroAdd">Add first transaction</button></p>`;
+    $('heroAdd').onclick = () => openTx();
+    return;
+  }
+  const total = Math.max(s.inc, s.out + s.sav, 1);
+  const pct = v => (100 * v / total).toFixed(2) + '%';
+  const left = Math.max(s.left, 0);
+  h.innerHTML = `
+    <p class="lead">Left this month</p>
+    <p class="big">${fmt(s.left)}<small>Lek</small></p>
+    <div class="strip" aria-hidden="true">
+      <span class="out" style="width:${pct(s.out)}"></span>
+      <span class="sav" style="width:${pct(s.sav)}"></span>
+      <span class="left" style="width:${pct(left)}"></span>
+    </div>
+    <div class="legend">
+      <div><i style="background:#9FE0BC"></i>Income<b>${fmt(s.inc)}</b></div>
+      <div><i style="background:#E39494"></i>Spent<b>${fmt(s.out)}</b></div>
+      <div><i style="background:#E7C56E"></i>Saved<b>${fmt(s.sav)}</b></div>
+    </div>
+    ${s.left < 0 ? `<p class="note">Over by ${lek(-s.left)} so far.</p>` : ''}`;
+}
+
+function renderChart() {
+  const months = Array.from({ length: 6 }, (_, i) => shiftYM(month, i - 5));
+  const data = months.map(m => summarize(db.tx, m));
+  const max = Math.max(1, ...data.flatMap(d => [d.inc, d.out]));
+  const W = 340, H = 150, top = 10, base = 128, gw = W / 6, bw = 16;
+  let svg = `<line x1="0" y1="${base}" x2="${W}" y2="${base}"/>`;
+  data.forEach((d, i) => {
+    const x = i * gw + gw / 2;
+    const hi = (base - top) * d.inc / max, ho = (base - top) * d.out / max;
+    svg += `<rect class="in" x="${x - bw - 2}" y="${base - hi}" width="${bw}" height="${hi}" rx="3"/>`;
+    svg += `<rect class="out" x="${x + 2}" y="${base - ho}" width="${bw}" height="${ho}" rx="3"/>`;
+    svg += `<text x="${x}" y="${H - 6}" text-anchor="middle"${months[i] === month ? ' font-weight="700"' : ''}>${monthShort(months[i])}</text>`;
+  });
+  $('chart').innerHTML = svg;
+}
+
+function renderCats(s) {
+  const rows = Object.entries(s.cats).sort((a, b) => b[1] - a[1]);
+  if (!rows.length) { $('cats').innerHTML = '<p class="muted" style="margin:0;font-size:14px">No spending recorded this month.</p>'; return; }
+  const max = rows[0][1];
+  $('cats').innerHTML = rows.map(([c, v]) => `
+    <div class="cat">
+      <span>${esc(c)}</span>
+      <span class="amt">${fmt(v)}<span class="pct">${Math.round(100 * v / s.out)}%</span></span>
+      <div class="bar"><span style="width:${(100 * v / max).toFixed(1)}%"></span></div>
+    </div>`).join('');
+}
+
+function renderGoals() {
+  if (!db.goals.length) { $('goals').innerHTML = '<p class="muted" style="margin:0;font-size:14px">Set a target and put money toward it from the Savings tab when adding a transaction.</p>'; return; }
+  $('goals').innerHTML = db.goals.map(g => {
+    const saved = goalSaved(db.tx, g.id);
+    const pct = Math.min(100, 100 * saved / g.target);
+    const done = saved >= g.target;
+    const when = g.deadline ? new Date(g.deadline + 'T00:00').toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '';
+    return `<div class="goal${done ? ' done' : ''}" role="group" aria-label="${esc(g.name)}">
+      <button class="name" data-edit-goal="${g.id}" style="background:none;border:0;padding:0;text-align:left;font-weight:600;font-size:15px">${esc(g.name)}</button>
+      <span class="nums"><b>${fmt(saved)}</b> / ${fmt(g.target)}</span>
+      <div class="bar"><span style="width:${pct.toFixed(1)}%"></span></div>
+      <div class="meta"><span>${done ? 'Reached' : Math.round(pct) + '% there' + (when ? ', by ' + when : '')}</span>
+      <button class="add" data-add-to="${g.id}" style="background:none;border:0;padding:0">Add money</button></div>
+    </div>`;
+  }).join('');
+}
+
+function renderTx() {
+  const q = query.trim().toLowerCase();
+  const rows = db.tx
+    .filter(t => ym(t.date) === month)
+    .filter(t => !q || (t.category + ' ' + (t.note || '') + ' ' + goalName(t.goalId)).toLowerCase().includes(q))
+    .sort((a, b) => b.date.localeCompare(a.date) || b.created - a.created);
+  $('txCount').textContent = rows.length ? rows.length + (rows.length === 1 ? ' entry' : ' entries') : '';
+  if (!rows.length) { $('txList').innerHTML = `<p class="empty-list">${q ? 'Nothing matches that search.' : 'No transactions in ' + monthName(month) + '.'}</p>`; return; }
+  $('txList').innerHTML = rows.map(t => {
+    const d = new Date(t.date + 'T00:00');
+    const sign = t.type === 'income' ? '+' : '−';
+    const label = t.type === 'saving' ? 'To ' + esc(goalName(t.goalId) || 'savings') : esc(t.category);
+    return `<button class="tx" data-edit-tx="${t.id}">
+      <span class="day"><b>${d.getDate()}</b>${d.toLocaleDateString('en-GB', { weekday: 'short' })}</span>
+      <span class="what"><span class="c">${label}</span>${t.note ? `<span class="n">${esc(t.note)}</span>` : ''}</span>
+      <span class="amt ${t.type}">${sign}${fmt(t.amount)}</span>
+    </button>`;
+  }).join('');
+}
+const goalName = id => (db.goals.find(g => g.id === id) || {}).name || '';
+
+// ---------- transaction dialog ----------
+const txDialog = $('txDialog'), txForm = $('txForm');
+function syncTxFields() {
+  const type = txForm.type.value;
+  $('catField').hidden = type === 'saving';
+  $('goalField').hidden = type !== 'saving';
+  txForm.category.required = type !== 'saving';
+  txForm.goalId.required = type === 'saving';
+  $('catList').innerHTML = (type === 'income' ? INCOME_CATS : EXPENSE_CATS).map(c => `<option value="${esc(c)}">`).join('');
+  $('goalId').innerHTML = db.goals.length
+    ? db.goals.map(g => `<option value="${g.id}">${esc(g.name)}</option>`).join('')
+    : '<option value="">Create a goal first</option>';
+}
+txForm.addEventListener('change', e => { if (e.target.name === 'type') syncTxFields(); });
+
+function openTx(t, preset) {
+  txForm.reset();
+  txForm.id.value = t ? t.id : '';
+  txForm.type.value = t ? t.type : (preset && preset.type) || 'expense';
+  syncTxFields();
+  txForm.amount.value = t ? t.amount : '';
+  txForm.category.value = t ? (t.type === 'saving' ? '' : t.category) : '';
+  txForm.goalId.value = t ? (t.goalId || '') : (preset && preset.goalId) || '';
+  txForm.date.value = t ? t.date : (ym(localISO(new Date())) === month ? localISO(new Date()) : month + '-01');
+  txForm.note.value = t ? (t.note || '') : '';
+  $('txTitle').textContent = t ? 'Edit transaction' : 'Add transaction';
+  $('txDelete').hidden = !t;
+  txDialog.showModal();
+  setTimeout(() => txForm.amount.focus(), 50);
+}
+txForm.addEventListener('submit', e => {
+  e.preventDefault();
+  const amount = Math.round(Number(txForm.amount.value));
+  if (!(amount > 0)) { toast('Enter an amount above zero.'); return; }
+  const type = txForm.type.value;
+  if (type === 'saving' && !txForm.goalId.value) { toast('Create a goal first.'); return; }
+  const t = {
+    id: txForm.id.value || uid(), type, amount,
+    category: type === 'saving' ? 'Savings' : txForm.category.value.trim() || 'Other',
+    goalId: type === 'saving' ? txForm.goalId.value : undefined,
+    date: txForm.date.value, note: txForm.note.value.trim(),
+    created: Date.now()
+  };
+  const i = db.tx.findIndex(x => x.id === t.id);
+  if (i >= 0) t.created = db.tx[i].created, db.tx[i] = t; else db.tx.push(t);
+  save(); txDialog.close(); month = ym(t.date); render(); toast(i >= 0 ? 'Updated' : 'Saved');
+});
+$('txDelete').onclick = () => {
+  db.tx = db.tx.filter(x => x.id !== txForm.id.value);
+  save(); txDialog.close(); render(); toast('Deleted');
+};
+
+// ---------- goal dialog ----------
+const goalDialog = $('goalDialog'), goalForm = $('goalForm');
+function openGoal(g) {
+  goalForm.reset();
+  goalForm.id.value = g ? g.id : '';
+  goalForm.name.value = g ? g.name : '';
+  goalForm.target.value = g ? g.target : '';
+  goalForm.deadline.value = g ? (g.deadline || '') : '';
+  $('goalTitle').textContent = g ? 'Edit goal' : 'New goal';
+  $('goalDelete').hidden = !g;
+  goalDialog.showModal();
+}
+goalForm.addEventListener('submit', e => {
+  e.preventDefault();
+  const target = Math.round(Number(goalForm.target.value));
+  if (!(target > 0)) { toast('Enter a target above zero.'); return; }
+  const g = { id: goalForm.id.value || uid(), name: goalForm.name.value.trim(), target, deadline: goalForm.deadline.value || '' };
+  const i = db.goals.findIndex(x => x.id === g.id);
+  if (i >= 0) db.goals[i] = g; else db.goals.push(g);
+  save(); goalDialog.close(); render(); toast('Goal saved');
+});
+$('goalDelete').onclick = () => {
+  const id = goalForm.id.value;
+  const n = db.tx.filter(t => t.goalId === id).length;
+  if (n && !confirm(`This goal has ${n} contribution${n > 1 ? 's' : ''}. Delete the goal and those entries too?`)) return;
+  db.goals = db.goals.filter(g => g.id !== id);
+  db.tx = db.tx.filter(t => t.goalId !== id);
+  save(); goalDialog.close(); render(); toast('Goal deleted');
+};
+
+// ---------- backup ----------
+const menuDialog = $('menuDialog');
+$('menuBtn').onclick = () => { $('backupText').value = JSON.stringify(db); menuDialog.showModal(); };
+$('copyBackup').onclick = async () => {
+  try { await navigator.clipboard.writeText(JSON.stringify(db)); toast('Backup copied'); }
+  catch (e) { $('backupText').select(); toast('Select the text and copy it manually.'); }
+};
+$('restoreBackup').onclick = () => {
+  try {
+    const d = JSON.parse($('backupText').value);
+    if (!d || !Array.isArray(d.tx) || !Array.isArray(d.goals)) throw 0;
+    if (!confirm(`Replace current data with ${d.tx.length} transactions and ${d.goals.length} goals?`)) return;
+    db = d; save(); menuDialog.close(); render(); toast('Restored');
+  } catch (e) { toast('That text is not a Lekbook backup.'); }
+};
+$('clearAll').onclick = () => {
+  if (!confirm('Delete every transaction and goal? This cannot be undone.')) return;
+  db = { tx: [], goals: [] }; save(); menuDialog.close(); render(); toast('All data deleted');
+};
+
+// ---------- wiring ----------
+$('prev').onclick = () => { month = shiftYM(month, -1); render(); };
+$('next').onclick = () => { month = shiftYM(month, 1); render(); };
+$('fab').onclick = () => openTx();
+$('addGoal').onclick = () => openGoal();
+$('search').addEventListener('input', e => { query = e.target.value; renderTx(); });
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-edit-tx],[data-edit-goal],[data-add-to],[data-close]');
+  if (!b) return;
+  if (b.dataset.editTx) openTx(db.tx.find(t => t.id === b.dataset.editTx));
+  else if (b.dataset.editGoal) openGoal(db.goals.find(g => g.id === b.dataset.editGoal));
+  else if (b.dataset.addTo) openTx(null, { type: 'saving', goalId: b.dataset.addTo });
+  else if ('close' in b.dataset) b.closest('dialog').close();
+});
+document.querySelectorAll('dialog').forEach(d => d.addEventListener('click', e => { if (e.target === d) d.close(); }));
+
+let toastTimer;
+function toast(msg) {
+  const t = $('toast'); t.textContent = msg; t.classList.add('show');
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+render();
+</script>
+</body>
+</html>
